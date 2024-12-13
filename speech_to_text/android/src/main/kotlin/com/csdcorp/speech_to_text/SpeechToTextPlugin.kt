@@ -346,21 +346,13 @@ public class SpeechToTextPlugin :
             Log.d("SpeechToTextPlugin", "Speech recognition not started: SDK too low or already listening")
             return
         }
-
-        Log.d("SpeechToTextPlugin", "Starting speech recognition")
-
-        // Stop AudioRecord before starting SpeechRecognizer to avoid conflicts
-        stopAudioRecording() // 음성 인식 전에 AudioRecord를 중지
+        var listenMode = enumValues<ListenMode>()[listenModeIndex]
 
         resultSent = false
-        createRecognizer(onDevice)
+        createRecognizer(onDevice, listenMode)
         minRms = 1000.0F
         maxRms = -100.0F
-
-        var listenMode = ListenMode.deviceDefault
-        if (listenModeIndex == ListenMode.dictation.ordinal) {
-            listenMode = ListenMode.dictation
-        }
+        debugLog("Start listening")
 
         optionallyStartBluetooth()
         setupRecognizerIntent(languageTag, partialResults, listenMode, onDevice)
@@ -669,7 +661,7 @@ public class SpeechToTextPlugin :
         return list.firstOrNull()?.serviceInfo?.let { ComponentName(it.packageName, it.name) }
     }
 
-    private fun createRecognizer(onDevice: Boolean) {
+    private fun createRecognizer(onDevice: Boolean, listenMode: ListenMode) {
         if ( null != speechRecognizer && onDevice == lastOnDevice ) {
             return
         }
@@ -716,7 +708,7 @@ public class SpeechToTextPlugin :
             }
         }
         debugLog("before setup intent")
-        setupRecognizerIntent(defaultLanguageTag, true, ListenMode.deviceDefault, false )
+        setupRecognizerIntent(defaultLanguageTag, true, listenMode, false )
         debugLog("after setup intent")
     }
 
@@ -732,7 +724,12 @@ public class SpeechToTextPlugin :
                 run {
                     recognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
                         debugLog("In RecognizerIntent apply")
-                        putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                        if (listenMode == ListenMode.search) {
+                            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH)
+                        }
+                        else {
+                            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                        }
                         debugLog("put model")
                         val localContext = pluginContext
                         if (null != localContext) {
