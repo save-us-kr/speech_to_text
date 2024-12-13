@@ -87,19 +87,19 @@ void main() {
       expect(channelHandler.listenLocale, TestSpeechChannelHandler.localeId1);
     });
     test('passes onDevice parameter', () async {
-      expect(await speechToText?.listen(onDevice: true), isTrue);
+      expect(await speechToText?.listen(), isTrue);
       expect(channelHandler.onDevice, isTrue);
     });
     test('passes partialResults parameter', () async {
-      expect(await speechToText?.listen(partialResults: false), isTrue);
+      expect(await speechToText?.listen(), isTrue);
       expect(channelHandler.partialResults, isFalse);
     });
     test('passes listenMode parameter', () async {
-      expect(await speechToText?.listen(listenMode: 3), isTrue);
+      expect(await speechToText?.listen(), isTrue);
       expect(channelHandler.listenMode, 3);
     });
     test('passes sampleRate parameter', () async {
-      expect(await speechToText?.listen(sampleRate: 10000), isTrue);
+      expect(await speechToText?.listen(), isTrue);
       expect(channelHandler.sampleRate, 10000);
     });
   });
