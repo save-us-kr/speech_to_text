@@ -1,10 +1,13 @@
 group 'com.csdcorp.speech_to_text'
 version '1.0-SNAPSHOT'
 
-rootProject.allprojects {
+buildscript {
     repositories {
         google()
         jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.0.0'
     }
 }
 
@@ -13,6 +16,14 @@ apply plugin: 'kotlin-android'
 
 android {
     namespace 'com.csdcorp.speech_to_text'
+    compileSdkVersion 34
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 34
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -21,18 +32,19 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-    
-    compileSdkVersion 34
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
-    defaultConfig {
-        minSdkVersion 21
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    }
+
     lintOptions {
         disable 'InvalidPackage'
     }
 }
 
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
